@@ -1,0 +1,17 @@
+{
+  "name": "pdf-to-text-cli",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "description": "Simple CLI to convert PDFs to text using PDF.js",
+  "bin": {
+    "pdf2txt": "./cli.mjs"
+  },
+  "scripts": {
+    "start": "node ./cli.mjs"
+  },
+  "dependencies": {
+    "fast-glob": "^3.3.2",
+    "pdfjs-dist": "^4.6.82"
+  }
+}
