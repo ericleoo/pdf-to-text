@@ -55,27 +55,42 @@ async function extractTextFromPdf(filePath) {
   return out;
 }
 
+function normalizeInputPattern(input) {
+  if (/^[a-zA-Z]:\\/.test(input)) {
+    const drive = input[0].toLowerCase();
+    return `/mnt/${drive}/${input.slice(3).replaceAll('\\', '/')}`;
+  }
+
+  if (input.startsWith('\\\\')) {
+    return input.replaceAll('\\', '/');
+  }
+
+  return input.replaceAll('\\', '/');
+}
+
 async function main() {
   const args = process.argv.slice(2);
   let toStdout = false;
-  let pattern;
+  const patterns = [];
   for (const arg of args) {
     if (arg === '--stdout' || arg === '-s') {
       toStdout = true;
-    } else if (!arg.startsWith('-') && !pattern) {
-      pattern = arg;
+    } else if (!arg.startsWith('-')) {
+      patterns.push(normalizeInputPattern(arg));
     }
   }
-  if (!pattern) {
-    console.error('Usage: pdf2txt [--stdout|-s] "<glob-pattern>"');
+  if (patterns.length === 0) {
+    console.error('Usage: pdf2txt [--stdout|-s] "<glob-pattern-or-path>" [...]');
     console.error('Example: pdf2txt "docs/**/*.pdf"');
+    console.error('Example: pdf2txt "C:\\Users\\me\\docs\\file.pdf"');
+    console.error('Example: pdf2txt "a.pdf" "b.pdf" "docs/**/*.pdf"');
     console.error('Example: pdf2txt --stdout "docs/**/*.pdf"');
     process.exit(1);
   }
 
-  const files = await fg(pattern, { dot: false, onlyFiles: true, caseSensitiveMatch: false });
+  const files = [...new Set(await fg(patterns, { dot: false, onlyFiles: true, caseSensitiveMatch: false }))];
   if (files.length === 0) {
-    console.error('No PDF files found for pattern:', pattern);
+    console.error('No PDF files found for input:', patterns.join(', '));
     process.exit(2);
   }
 
