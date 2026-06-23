@@ -8,7 +8,7 @@
     "pdf2txt": "./cli.mjs"
   },
   "scripts": {
-    "start": "node ./cli.mjs"
+    "start": "bun ./cli.mjs"
   },
   "dependencies": {
     "fast-glob": "^3.3.2",

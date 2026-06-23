@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env bun
 import fg from 'fast-glob';
 import fs from 'node:fs/promises';
 import path from 'node:path';
